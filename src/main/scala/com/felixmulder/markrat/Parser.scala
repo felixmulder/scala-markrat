@@ -1,29 +1,29 @@
 package com.felixmulder.markrat
 
-import scala.util.matching.Regex
 import scala.util.parsing.combinator.{ PackratParsers, RegexParsers }
 
 class MarkdownParser extends RegexParsers with PackratParsers {
   import HTML._
   import MarkdownTokens._
+  import scala.util.matching.Regex
+  import scala.language.postfixOps
 
-  override def skipWhitespace = false
-  
-  lazy val output: PackratParser[ParsedHTML] = header | innerHTML
+  lazy val output: PackratParser[Seq[ParsedHTML]] = html*
+  lazy val html: PackratParser[ParsedHTML] = header | innerHTML
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
-  lazy val innerHTML: Parser[InnerHTML] = bold | italicized | text ^^ Text
+  lazy val innerHTML: PackratParser[InnerHTML] = bold | italicized | innerText ^^ Text
 
   val parseHeader = (level: Int, token: String) =>
-    token ~> textLine <~ token ^^ (t => Header(level, t.replace("#", "").trim)) |
-    token ~> textLine ^^ (t => Header(level, t.replace("#", "").trim))
+    token ~> headerText <~ token ^^ (t => Header(level, t.trim)) |
+    token ~> headerText ^^ (t => Header(level, t.trim))
 
   lazy val h1: PackratParser[Header] =
-    parseHeader(1, header1) | 
-    textLine <~ header1Alt ^^ (t => Header(1, t.trim))
+    parseHeader(1, header1) |
+    headerText <~ header1Alt ^^ (t => Header(1, t.trim))
 
   lazy val h2: PackratParser[Header] =
-    parseHeader(2, header2) | 
-    textLine <~ header2Alt ^^ (t => Header(2, t.trim))
+    parseHeader(2, header2) |
+    headerText <~ header2Alt ^^ (t => Header(2, t.trim))
 
   lazy val h3: PackratParser[Header] = parseHeader(3, header3)
   lazy val h4: PackratParser[Header] = parseHeader(4, header4)

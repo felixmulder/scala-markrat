@@ -8,8 +8,8 @@ object MarkdownTokens {
   val header5 = "#####"
   val header6 = "######"
 
-  val header1Alt = "\n={3,}\n".r
-  val header2Alt = "\n-{3,}\n".r
+  val header1Alt = "={3,}\n".r
+  val header2Alt = "-{3,}\n".r
 
   val boldUnderlines = "__"
   val boldAsterisks = "**"
@@ -17,6 +17,6 @@ object MarkdownTokens {
   val italicsUnderline = "_"
   val italicsAsterisk = "*"
 
-  val textLine = "^.*".r
-  val text = """[^\*_]*""".r
+  val innerText = """[^\*_\r\n]+""".r
+  val headerText = """[^#\r\n]*""".r
 }

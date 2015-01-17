@@ -7,37 +7,52 @@ class SimpleTests extends FlatSpec with Matchers {
   val parser = new MarkdownParser
 
   "MarkdownParser" should "be able to parse h1 from markdown" in {
-    val expected = Header(1, "Hello, world!")
+    val expected = Seq(Header(1, "Hello, world!"))
     testParse("#Hello, world! ", expected)
     testParse("# Hello, world! #", expected)
     testParse("Hello, world!\n===\n", expected)
   }
 
   it should "be able to parse h2 from markdown" in {
-    val expected = Header(2, "Hello, world!")
+    val expected = Seq(Header(2, "Hello, world!"))
     testParse("## Hello, world!", expected)
     testParse("## Hello, world! ##", expected)
     testParse("Hello, world!\n----\n", expected)
   }
 
   it should "be able to parse bold from markdown" in {
-    val expected = Italic(Text("italic text"))
+    val expected = Seq(Italic(Text("italic text")))
     testParse("_italic text_", expected)
     testParse("*italic text*", expected)
   }
 
   it should "be able to parse emphasized from markdown" in {
-    val expected = Bold(Text("bold text"))
+    val expected = Seq(Bold(Text("bold text")))
     testParse("__bold text__", expected)
     testParse("**bold text**", expected)
   }
 
-  it should "Be able to parse emphasized bold from markdown" in {
-    val expected = Bold(Italic(Text("bold and italicized text")))
+  it should "be able to parse emphasized bold from markdown" in {
+    val expected = Seq(Bold(Italic(Text("bold and italicized text"))))
     testParse("**_bold and italicized text_**", expected)
   }
 
-  def testParse(str: String, expected: ParsedHTML) = parser.parse(str) match {
+  it should "be able to parse multiple headers" in {
+    val expected = Seq(Header(1, "Header 1"),
+                       Header(2, "Header 2"),
+                       Header(3, "Header 3"))
+    testParse("# Header 1#\n## Header 2 ##\n### Header 3 ###", expected)
+  }
+
+  it should "be able to parse multiple alternate headers" in {
+    val expected = Seq(Header(1, "Header 1"),
+                       Header(1, "Header 1"),
+                       Header(2, "Header 2"),
+                       Header(3, "Header 3"))
+    testParse("Header 1\n=====\n#Header 1#\nHeader 2\n-------\n### Header 3 ###", expected)
+  }
+
+  def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
     case Some(parsed) => assert(parsed === expected)
     case None => fail
   }
