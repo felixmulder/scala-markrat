@@ -8,22 +8,25 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   import scala.util.matching.Regex
   import scala.language.postfixOps
 
+  override val skipWhitespace = false
+  private val separator = EOI | EOL
+
   lazy val output: PackratParser[Seq[ParsedHTML]] = html*
-  lazy val html: PackratParser[ParsedHTML] = header | innerHTML
+  lazy val html: PackratParser[ParsedHTML] = code | header | innerHTML
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
-  lazy val innerHTML: PackratParser[InnerHTML] = bold | italicized | innerText ^^ Text
+  lazy val innerHTML: PackratParser[InnerHTML] = bold | italicized | innerText <~ (separator?) ^^ Text
+
 
   val parseHeader = (level: Int, token: String) =>
-    token ~> headerText <~ token ^^ (t => Header(level, t.trim)) |
-    token ~> headerText ^^ (t => Header(level, t.trim))
+    token ~> headerText <~ ((token?) ~ separator?) ^^ (t => Header(level, t.trim))
 
   lazy val h1: PackratParser[Header] =
     parseHeader(1, header1) |
-    headerText <~ header1Alt ^^ (t => Header(1, t.trim))
+    headerText <~ header1Alt <~ (separator?) ^^ (t => Header(1, t.trim))
 
   lazy val h2: PackratParser[Header] =
     parseHeader(2, header2) |
-    headerText <~ header2Alt ^^ (t => Header(2, t.trim))
+    headerText <~ header2Alt <~ (separator?) ^^ (t => Header(2, t.trim))
 
   lazy val h3: PackratParser[Header] = parseHeader(3, header3)
   lazy val h4: PackratParser[Header] = parseHeader(4, header4)
@@ -37,6 +40,9 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   lazy val italicized: PackratParser[Italic] =
     italicsUnderline ~> innerHTML <~ italicsUnderline ^^ Italic |
     italicsAsterisk ~> innerHTML <~ italicsAsterisk ^^ Italic
+
+  lazy val code: PackratParser[Code] =
+    (codeBlock ~ EOL) ~> (codeLine*) <~ (codeBlock ~ separator?) ^^ Code
 
   def parse(markdown: String) = parseAll(output, markdown) match {
     case Success(result, _) => Some(result)

@@ -6,7 +6,7 @@ class SimpleTests extends FlatSpec with Matchers {
 
   val parser = new MarkdownParser
 
-  "MarkdownParser" should "be able to parse h1 from markdown" in {
+  "MarkdownParser basics" should "be able to parse h1 from markdown" in {
     val expected = Seq(Header(1, "Hello, world!"))
     testParse("#Hello, world! ", expected)
     testParse("# Hello, world! #", expected)
@@ -50,6 +50,20 @@ class SimpleTests extends FlatSpec with Matchers {
                        Header(2, "Header 2"),
                        Header(3, "Header 3"))
     testParse("Header 1\n=====\n#Header 1#\nHeader 2\n-------\n### Header 3 ###", expected)
+  }
+
+  "MarkdownParser code" should "be able to handle parsing simple code block" in {
+    val expected = Seq(Code(Seq("System.out.println(\"Hello, world!\");\n")))
+    testParse("```\nSystem.out.println(\"Hello, world!\");\n```\n", expected)
+  }
+
+  it should "be able to handle multiline code block" in {
+    val expected = Seq(Code(Seq("int main(void)\n",
+                                "{\n",
+                                "    printf(\"Hello, world!\");\n",
+                                "    return(0);\n",
+                                "}\n")))
+    testParse("```\nint main(void)\n{\n    printf(\"Hello, world!\");\n    return(0);\n}\n```\n", expected)
   }
 
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {

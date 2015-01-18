@@ -22,4 +22,9 @@ object HTML {
     val innerTrimmed = inner.toString.trim
     override def toString = s"<i>$innerTrimmed</i>"
   }
+
+  case class Code(inner: Seq[String]) extends ParsedHTML {
+    override def toString =
+      s"""<pre><code class="">${ inner.mkString("") }</code></pre>"""
+  }
 }
