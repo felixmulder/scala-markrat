@@ -8,9 +8,10 @@ Still a HUGE work in progress. Not to be thought of as usable in any sense...
 TODO
 ----
 * ~~Should be able to define language of code blocks~~
+* ~~Links~~
+* Link titles
 * Unordered lists
 * Enumerations (lists with numerals/roman letters)
-* Links
 * Images
 * Inline code
 * Block quotes
