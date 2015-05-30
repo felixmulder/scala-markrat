@@ -7,7 +7,7 @@ Still a HUGE work in progress. Not to be thought of as usable in any sense...
 
 TODO
 ----
-* Should be able to define language of code blocks
+* ~~Should be able to define language of code blocks~~
 * Unordered lists
 * Enumerations (lists with numerals/roman letters)
 * Links

@@ -23,8 +23,8 @@ object HTML {
     override def toString = s"<i>$innerTrimmed</i>"
   }
 
-  case class Code(inner: Seq[String]) extends ParsedHTML {
+  case class Code(lang: Option[String], inner: Seq[String]) extends ParsedHTML {
     override def toString =
-      s"""<pre><code class="">${ inner.mkString("") }</code></pre>"""
+      s"""<pre><code class="${ lang.getOrElse("") }">${ inner.mkString("") }</code></pre>"""
   }
 }

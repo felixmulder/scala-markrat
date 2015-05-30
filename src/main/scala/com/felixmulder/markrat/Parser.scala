@@ -42,7 +42,9 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     italicsAsterisk ~> innerHTML <~ italicsAsterisk ^^ Italic
 
   lazy val code: PackratParser[Code] =
-    (codeBlock ~ EOL) ~> (codeLine*) <~ (codeBlock ~ separator?) ^^ Code
+    (codeBlock ~> (codeLanguage?) <~ EOL) ~ (codeLine*) <~ (codeBlock ~ separator?) ^^ {
+      (r: ~[Option[String], Seq[String]]) => Code(r._1, r._2)
+    }
 
   def parse(markdown: String) = parseAll(output, markdown) match {
     case Success(result, _) => Some(result)

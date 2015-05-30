@@ -53,17 +53,35 @@ class SimpleTests extends FlatSpec with Matchers {
   }
 
   "MarkdownParser code" should "be able to handle parsing simple code block" in {
-    val expected = Seq(Code(Seq("System.out.println(\"Hello, world!\");\n")))
+    val expected = Seq(Code(None, Seq("System.out.println(\"Hello, world!\");\n")))
     testParse("```\nSystem.out.println(\"Hello, world!\");\n```\n", expected)
   }
 
   it should "be able to handle multiline code block" in {
-    val expected = Seq(Code(Seq("int main(void)\n",
-                                "{\n",
-                                "    printf(\"Hello, world!\");\n",
-                                "    return(0);\n",
-                                "}\n")))
+    val expected = Seq(Code(None, Seq("int main(void)\n",
+                                      "{\n",
+                                      "    printf(\"Hello, world!\");\n",
+                                      "    return(0);\n",
+                                      "}\n")))
     testParse("```\nint main(void)\n{\n    printf(\"Hello, world!\");\n    return(0);\n}\n```\n", expected)
+  }
+
+  it should "be able to define a code language if applicable" in {
+    val exp = Seq(Code(Some("c"), Seq("printf(\"Hello, world!\");\n")))
+    testParse("```c\nprintf(\"Hello, world!\");\n```\n", exp)
+
+    val exp2 = Seq(Code(Some("java"), Seq("public class Test {\n",
+                                          "    public static void main(String[] args) {\n",
+                                          "        System.out.println(\"Hello, world!\");\n",
+                                          "    }\n",
+                                          "}\n")))
+    testParse("```java\n"+
+              "public class Test {\n"+
+              "    public static void main(String[] args) {\n"+
+              "        System.out.println(\"Hello, world!\");\n"+
+              "    }\n"+
+              "}\n"+
+              "```\n", exp2)
   }
 
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
