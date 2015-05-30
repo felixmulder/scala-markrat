@@ -27,4 +27,9 @@ object HTML {
     override def toString =
       s"""<pre><code class="${ lang.getOrElse("") }">${ inner.mkString("") }</code></pre>"""
   }
+
+  case class Link(text: String, href: String, title: Option[String]) extends ParsedHTML {
+    override def toString =
+      s"""<a ${ title.map(x => "title=\"" + x + "\"").getOrElse("") } href="$href">$text</a>"""
+  }
 }

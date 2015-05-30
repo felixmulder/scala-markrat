@@ -52,7 +52,7 @@ class SimpleTests extends FlatSpec with Matchers {
     testParse("Header 1\n=====\n#Header 1#\nHeader 2\n-------\n### Header 3 ###", expected)
   }
 
-  "MarkdownParser code" should "be able to handle parsing simple code block" in {
+  "Code parsing" should "be able to handle parsing simple code block" in {
     val expected = Seq(Code(None, Seq("System.out.println(\"Hello, world!\");\n")))
     testParse("```\nSystem.out.println(\"Hello, world!\");\n```\n", expected)
   }
@@ -82,6 +82,21 @@ class SimpleTests extends FlatSpec with Matchers {
               "    }\n"+
               "}\n"+
               "```\n", exp2)
+  }
+
+  "Link parsing" should "be able to parse a link" in {
+    val exp = Seq(Link("This is my title!", "http://www.felixmulder.com", None))
+
+    testParse("[This is my title!](http://www.felixmulder.com)", exp)
+  }
+
+  it should "be able to supply a title when necesssary" in {
+    /* Need to implement parsing of title
+     * Should look like this:
+     *
+     * [Link text](http://felixmulder.com "Link title")
+     */
+    assert(false)
   }
 
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
