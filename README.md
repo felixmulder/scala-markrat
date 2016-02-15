@@ -10,7 +10,6 @@ TODO
 * ~~Should be able to define language of code blocks~~
 * ~~Links~~
 * ~~Link titles~~
-* ~~Paragraphs~~
 * Unordered lists
 * Enumerations (lists with numerals/roman letters)
 * Images
@@ -18,5 +17,5 @@ TODO
 * Block quotes
 * Inline HTML
 * Horizontal rule (`<hr>`)
-* Paragraphs instead of raw text
+* ~~Paragraphs instead of raw text~~
 * Tables
