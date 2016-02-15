@@ -28,6 +28,7 @@ object MarkdownTokens {
   val codeBlock = "```"
   val codeLanguage = """[a-zA-Z0-9+-]+""".r
   val codeLine = """((?!```\n)[^\r\n]+)[\n]""".r
+  val inlinedCode = """[^\r\n`]*""".r
 
   val innerText = """[^\*_\r\n]+""".r
   val headerText = """[^#\r\n]*\n?""".r

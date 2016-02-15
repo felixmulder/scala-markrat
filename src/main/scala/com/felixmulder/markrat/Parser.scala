@@ -10,10 +10,10 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   override val skipWhitespace = false
   private val separator = EOI | EOL
 
-  lazy val output: PackratParser[Seq[ParsedHTML]] = html*
+  lazy val output: PackratParser[Seq[ParsedHTML]] = html.*
   lazy val html: PackratParser[ParsedHTML] = code | header | link | innerHTML
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
-  lazy val innerHTML: PackratParser[InnerHTML] = bold | italicized | innerText <~ (separator?) ^^ Text
+  lazy val innerHTML: PackratParser[InnerHTML] = inlineCode | bold | italicized | innerText <~ (separator.?) ^^ Text
 
 
   val parseHeader = (level: Int, token: String) =>
@@ -44,6 +44,9 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     (codeBlock ~> codeLanguage.? <~ EOL) ~ codeLine.* <~ codeBlock ~ separator.? ^^ {
       (r: ~[Option[String], Seq[String]]) => Code(r._1, r._2)
     }
+
+  lazy val inlineCode: PackratParser[InlineCode] =
+    "`" ~> inlinedCode <~ "`" ^^ InlineCode
 
   lazy val link: PackratParser[Link] =
     ("[" ~> linkText <~ "](") ~ url ~ ((whiteSpace.* ~ quote) ~> hoverText <~ quote).? <~ (")" ~ separator.?) ^^ {

@@ -84,6 +84,11 @@ class SimpleTests extends FlatSpec with Matchers {
               "```\n", exp2)
   }
 
+  it should "be able to handle inline code" in {
+    val exp = Seq(InlineCode("scala.collection.mutable"))
+    testParse("`scala.collection.mutable`", exp)
+  }
+
   "Link parsing" should "be able to parse a link" in {
     val exp = Seq(Link("This is my title!", "http://www.felixmulder.com", None))
 

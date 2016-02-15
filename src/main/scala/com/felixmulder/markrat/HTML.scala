@@ -1,7 +1,7 @@
 package com.felixmulder.markrat
 
 object HTML {
-  sealed abstract trait ParsedHTML
+  sealed trait ParsedHTML
 
   case class Header(level: Int, inner: String) extends ParsedHTML {
     val innerTrimmed = inner.trim
@@ -21,6 +21,10 @@ object HTML {
   case class Italic(inner: InnerHTML) extends InnerHTML {
     val innerTrimmed = inner.toString.trim
     override def toString = s"<i>$innerTrimmed</i>"
+  }
+
+  case class InlineCode(inner: String) extends InnerHTML {
+    override def toString = s"<code>$inner</code>"
   }
 
   case class Code(lang: Option[String], inner: Seq[String]) extends ParsedHTML {

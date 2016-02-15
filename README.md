@@ -9,11 +9,11 @@ TODO
 ----
 * ~~Should be able to define language of code blocks~~
 * ~~Links~~
-* Link titles
+* ~~Link titles~~
 * Unordered lists
 * Enumerations (lists with numerals/roman letters)
 * Images
-* Inline code
+* ~~Inline code~~
 * Block quotes
 * Inline HTML
 * Horizontal rule (`<hr>`)
