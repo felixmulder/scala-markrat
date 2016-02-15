@@ -1,14 +1,14 @@
 package com.felixmulder.markrat
 
 object HTML {
-  abstract class ParsedHTML
+  sealed abstract trait ParsedHTML
 
   case class Header(level: Int, inner: String) extends ParsedHTML {
     val innerTrimmed = inner.trim
     override def toString = s"<h$level>$innerTrimmed</h$level>"
   }
 
-  abstract class InnerHTML extends ParsedHTML
+  sealed trait InnerHTML extends ParsedHTML
   case class Text(str: String) extends InnerHTML {
     override def toString = str
   }
@@ -30,6 +30,6 @@ object HTML {
 
   case class Link(text: String, href: String, title: Option[String]) extends ParsedHTML {
     override def toString =
-      s"""<a ${ title.map(x => "title=\"" + x + "\"").getOrElse("") } href="$href">$text</a>"""
+      s"""<a${ title.map(x => s""" title="$x" """).getOrElse(" ") }href="$href">$text</a>"""
   }
 }

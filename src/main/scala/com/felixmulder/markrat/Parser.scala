@@ -6,7 +6,6 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   import HTML._
   import MarkdownTokens._
   import scala.util.matching.Regex
-  import scala.language.postfixOps
 
   override val skipWhitespace = false
   private val separator = EOI | EOL
@@ -18,15 +17,15 @@ class MarkdownParser extends RegexParsers with PackratParsers {
 
 
   val parseHeader = (level: Int, token: String) =>
-    token ~> headerText <~ ((token?) ~ separator?) ^^ (t => Header(level, t.trim))
+    token ~> headerText <~ (token.? ~ separator.?) ^^ (t => Header(level, t.trim))
 
   lazy val h1: PackratParser[Header] =
     parseHeader(1, header1) |
-    headerText <~ header1Alt <~ (separator?) ^^ (t => Header(1, t.trim))
+    headerText <~ header1Alt <~ separator.? ^^ (t => Header(1, t.trim))
 
   lazy val h2: PackratParser[Header] =
     parseHeader(2, header2) |
-    headerText <~ header2Alt <~ (separator?) ^^ (t => Header(2, t.trim))
+    headerText <~ header2Alt <~ separator.? ^^ (t => Header(2, t.trim))
 
   lazy val h3: PackratParser[Header] = parseHeader(3, header3)
   lazy val h4: PackratParser[Header] = parseHeader(4, header4)
@@ -42,13 +41,13 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     italicsAsterisk ~> innerHTML <~ italicsAsterisk ^^ Italic
 
   lazy val code: PackratParser[Code] =
-    (codeBlock ~> (codeLanguage?) <~ EOL) ~ (codeLine*) <~ (codeBlock ~ separator?) ^^ {
+    (codeBlock ~> codeLanguage.? <~ EOL) ~ codeLine.* <~ codeBlock ~ separator.? ^^ {
       (r: ~[Option[String], Seq[String]]) => Code(r._1, r._2)
     }
 
   lazy val link: PackratParser[Link] =
-    ("[" ~> linkText <~ "](") ~ url <~ (")" ~ separator?) ^^ {
-      (r: ~[String, String]) => Link(r._1, r._2, None)
+    ("[" ~> linkText <~ "](") ~ url ~ ((whiteSpace.* ~ quote) ~> hoverText <~ quote).? <~ (")" ~ separator.?) ^^ {
+      (r: ~[~[String,String],Option[String]]) => Link(r._1._1, r._1._2, r._2.map(_.trim))
     }
 
   def parse(markdown: String) = parseAll(output, markdown) match {

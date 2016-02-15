@@ -96,7 +96,8 @@ class SimpleTests extends FlatSpec with Matchers {
      *
      * [Link text](http://felixmulder.com "Link title")
      */
-    assert(false)
+    val exp = Seq(Link("This is my title!", "http://www.felixmulder.com", Some("Link title")))
+    testParse("[This is my title!](http://www.felixmulder.com \"Link title\")", exp)
   }
 
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {

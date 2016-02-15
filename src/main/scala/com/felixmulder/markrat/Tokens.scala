@@ -3,6 +3,8 @@ package com.felixmulder.markrat
 object MarkdownTokens {
   val EOI = """\z""".r
   val EOL = sys.props("line.separator")
+  val quote = "\""
+  val whiteSpace = """[\r\n ]""".r
 
   val header1 = "#"
   val header2 = "##"
@@ -31,6 +33,7 @@ object MarkdownTokens {
   val headerText = """[^#\r\n]*\n?""".r
 
   val linkText = """[^\]]+""".r
+  val hoverText = """[^\"]*""".r
   val url = """[^ )\r\n]+""".r
   val urlTitle = """[^)]""".r
 }
