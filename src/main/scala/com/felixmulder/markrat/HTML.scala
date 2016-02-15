@@ -23,6 +23,10 @@ object HTML {
     override def toString = s"<i>$innerTrimmed</i>"
   }
 
+  case class Blockquote(inner: Seq[ParsedHTML]) extends InnerHTML {
+    override def toString = s"<blockquote>${inner.mkString(" ")}</blockquote>"
+  }
+
   case class InlineCode(inner: String) extends InnerHTML {
     override def toString = s"<code>$inner</code>"
   }

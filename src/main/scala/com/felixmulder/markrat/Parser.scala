@@ -11,9 +11,13 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   private val separator = EOI | EOL
 
   lazy val output: PackratParser[Seq[ParsedHTML]] = html.*
-  lazy val html: PackratParser[ParsedHTML] = code | header | link | innerHTML
+  lazy val html: PackratParser[ParsedHTML] = blockQuote | code | header | link | innerHTML
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
-  lazy val innerHTML: PackratParser[InnerHTML] = inlineCode | bold | italicized | innerText <~ (separator.?) ^^ Text
+  lazy val innerHTML: PackratParser[InnerHTML] =
+    inlineCode |
+    bold       |
+    italicized |
+    innerText <~ separator.? ^^ Text
 
 
   val parseHeader = (level: Int, token: String) =>
@@ -42,7 +46,7 @@ class MarkdownParser extends RegexParsers with PackratParsers {
 
   lazy val code: PackratParser[Code] =
     (codeBlock ~> codeLanguage.? <~ EOL) ~ codeLine.* <~ codeBlock ~ separator.? ^^ {
-      (r: ~[Option[String], Seq[String]]) => Code(r._1, r._2)
+      case lang ~ bdy => Code(lang, bdy)
     }
 
   lazy val inlineCode: PackratParser[InlineCode] =
@@ -50,8 +54,12 @@ class MarkdownParser extends RegexParsers with PackratParsers {
 
   lazy val link: PackratParser[Link] =
     ("[" ~> linkText <~ "](") ~ url ~ ((whiteSpace.* ~ quote) ~> hoverText <~ quote).? <~ (")" ~ separator.?) ^^ {
-      (r: ~[~[String,String],Option[String]]) => Link(r._1._1, r._1._2, r._2.map(_.trim))
+      case txt ~ uri ~ hover => Link(txt, uri, hover)
     }
+
+  lazy val blockQuote: PackratParser[Blockquote] =
+    ("> " ~> blockQuote) |
+    ("> " ~> innerHTML).+ ^^ Blockquote
 
   def parse(markdown: String) = parseAll(output, markdown) match {
     case Success(result, _) => Some(result)

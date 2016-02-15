@@ -105,8 +105,13 @@ class SimpleTests extends FlatSpec with Matchers {
     testParse("[This is my title!](http://www.felixmulder.com \"Link title\")", exp)
   }
 
+  "Blockquote parsing" should "be able to handle single line block quote" in {
+    val exp = Seq(Blockquote(Seq(Text("Hello, blockquote!"))))
+    testParse("> Hello, blockquote!", exp)
+  }
+
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
-    case Some(parsed) => assert(parsed === expected)
+    case Some(parsed) => parsed shouldEqual expected
     case None => fail
   }
 }
