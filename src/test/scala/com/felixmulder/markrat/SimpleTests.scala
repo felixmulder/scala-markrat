@@ -21,19 +21,19 @@ class SimpleTests extends FlatSpec with Matchers {
   }
 
   it should "be able to parse bold from markdown" in {
-    val expected = Seq(Italic(Text("italic text")))
+    val expected = Seq(Paragraph(Seq(Italic(Text("italic text")))))
     testParse("_italic text_", expected)
     testParse("*italic text*", expected)
   }
 
   it should "be able to parse emphasized from markdown" in {
-    val expected = Seq(Bold(Text("bold text")))
+    val expected = Seq(Paragraph(Seq(Bold(Text("bold text")))))
     testParse("__bold text__", expected)
     testParse("**bold text**", expected)
   }
 
   it should "be able to parse emphasized bold from markdown" in {
-    val expected = Seq(Bold(Italic(Text("bold and italicized text"))))
+    val expected = Seq(Paragraph(Seq(Bold(Italic(Text("bold and italicized text"))))))
     testParse("**_bold and italicized text_**", expected)
   }
 
@@ -50,6 +50,18 @@ class SimpleTests extends FlatSpec with Matchers {
                        Header(2, "Header 2"),
                        Header(3, "Header 3"))
     testParse("Header 1\n=====\n#Header 1#\nHeader 2\n-------\n### Header 3 ###", expected)
+  }
+
+  "Paragraph parsing" should "be able to parse a single line into a paragraph" in {
+    val exp = Seq(Paragraph(Seq(Text("Line"))))
+    testParse("Line", exp)
+    testParse("Line\n\n", exp)
+  }
+
+  it should "be able to parse two paragraphs" in {
+    val exp = Seq(Paragraph(Seq(Text("Line1"))), Paragraph(Seq(Text("Line2"))))
+    testParse("Line1\n\nLine2", exp)
+    testParse("Line1\n\nLine2\n\n", exp)
   }
 
   "Code parsing" should "be able to handle parsing simple code block" in {
@@ -85,12 +97,12 @@ class SimpleTests extends FlatSpec with Matchers {
   }
 
   it should "be able to handle inline code" in {
-    val exp = Seq(InlineCode("scala.collection.mutable"))
+    val exp = Seq(Paragraph(Seq(InlineCode("scala.collection.mutable"))))
     testParse("`scala.collection.mutable`", exp)
   }
 
   "Link parsing" should "be able to parse a link" in {
-    val exp = Seq(Link("This is my title!", "http://www.felixmulder.com", None))
+    val exp = Seq(Paragraph(Seq(Link("This is my title!", "http://www.felixmulder.com", None))))
 
     testParse("[This is my title!](http://www.felixmulder.com)", exp)
   }
@@ -101,12 +113,12 @@ class SimpleTests extends FlatSpec with Matchers {
      *
      * [Link text](http://felixmulder.com "Link title")
      */
-    val exp = Seq(Link("This is my title!", "http://www.felixmulder.com", Some("Link title")))
+    val exp = Seq(Paragraph(Seq(Link("This is my title!", "http://www.felixmulder.com", Some("Link title")))))
     testParse("[This is my title!](http://www.felixmulder.com \"Link title\")", exp)
   }
 
   "Blockquote parsing" should "be able to handle single line block quote" in {
-    val exp = Seq(Blockquote(Seq(Text("Hello, blockquote!"))))
+    val exp = Seq(Paragraph(Seq(Blockquote(Seq(Paragraph(Seq(Text("Hello, blockquote!"))))))))
     testParse("> Hello, blockquote!", exp)
   }
 

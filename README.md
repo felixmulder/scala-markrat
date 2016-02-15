@@ -10,6 +10,7 @@ TODO
 * ~~Should be able to define language of code blocks~~
 * ~~Links~~
 * ~~Link titles~~
+* ~~Paragraphs~~
 * Unordered lists
 * Enumerations (lists with numerals/roman letters)
 * Images

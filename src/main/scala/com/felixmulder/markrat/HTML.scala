@@ -8,26 +8,29 @@ object HTML {
     override def toString = s"<h$level>$innerTrimmed</h$level>"
   }
 
-  sealed trait InnerHTML extends ParsedHTML
-  case class Text(str: String) extends InnerHTML {
-    override def toString = str
+  case class Paragraph(body: Seq[Body]) extends ParsedHTML {
+    override def toString = s"<p>${body.mkString(" ")}</p>"
   }
 
-  case class Bold(inner: InnerHTML) extends InnerHTML {
-    val innerTrimmed = inner.toString.trim
-    override def toString = s"<b>$innerTrimmed</b>"
+  sealed trait Body extends ParsedHTML
+
+  case class Text(str: String) extends Body {
+    override def toString = str.trim
   }
 
-  case class Italic(inner: InnerHTML) extends InnerHTML {
-    val innerTrimmed = inner.toString.trim
-    override def toString = s"<i>$innerTrimmed</i>"
+  case class Bold(inner: Body) extends Body {
+    override def toString = s"<b>$inner</b>"
   }
 
-  case class Blockquote(inner: Seq[ParsedHTML]) extends InnerHTML {
-    override def toString = s"<blockquote>${inner.mkString(" ")}</blockquote>"
+  case class Italic(inner: Body) extends Body {
+    override def toString = s"<i>$inner</i>"
   }
 
-  case class InlineCode(inner: String) extends InnerHTML {
+  case class Blockquote(inner: Seq[ParsedHTML]) extends Body {
+    override def toString = s"<blockquote>${inner.mkString("\n")}</blockquote>"
+  }
+
+  case class InlineCode(inner: String) extends Body {
     override def toString = s"<code>$inner</code>"
   }
 
@@ -36,7 +39,7 @@ object HTML {
       s"""<pre><code class="${ lang.getOrElse("") }">${ inner.mkString("") }</code></pre>"""
   }
 
-  case class Link(text: String, href: String, hoverText: Option[String]) extends ParsedHTML {
+  case class Link(text: String, href: String, hoverText: Option[String]) extends Body {
     override def toString =
       s"""<a${ hoverText.map(x => s""" title="$x" """).getOrElse(" ") }href="$href">$text</a>"""
   }
