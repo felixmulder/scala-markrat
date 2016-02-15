@@ -9,7 +9,7 @@ object HTML {
   }
 
   case class Paragraph(body: Seq[Body]) extends ParsedHTML {
-    override def toString = s"<p>${body.mkString(" ")}</p>"
+    override def toString = s"<p>${body.mkString}</p>"
   }
 
   sealed trait Body extends ParsedHTML

@@ -18,7 +18,7 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     inlineCode |
     bold       |
     italicized |
-    (EOL.? ~> innerText) ^^ Text
+    EOL.? ~> innerText ^^ Text
 
   lazy val paragraph: PackratParser[Paragraph] =
     (blockQuote | innerHTML).+ <~ ((EOL ~ EOL) | EOI) ^^ Paragraph
@@ -61,7 +61,12 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     }
 
   lazy val blockQuote: PackratParser[Blockquote] =
-    ("> " ~> output) ^^ Blockquote
+    ("> " ~> blockContents <~ (EOL | EOI)).+ ^^ {
+      case x => Blockquote(x.flatten)
+    }
+
+  lazy val blockContents: PackratParser[Seq[ParsedHTML]] =
+    (code | header | paragraph).+
 
   def parse(markdown: String) = parseAll(output, markdown) match {
     case Success(result, _) => Some(result)
