@@ -44,9 +44,18 @@ object HTML {
       s"""<a${ hoverText.map(x => s""" title="$x" """).getOrElse(" ") }href="$href">$text</a>"""
   }
 
-  case class UnorderedList(items: Seq[Seq[ParsedHTML]]) extends Body {
-    private def seqToString(item: Seq[ParsedHTML]): String = item.mkString(" ")
+  abstract class ListHTML(items: Seq[Seq[ParsedHTML]]) extends Body {
+    def tpe: String
+    def seqToString(item: Seq[ParsedHTML]): String = item.mkString(" ")
     override def toString =
-      s"""<ul>${ items.map(seqToString).mkString("<li>", "</li><li>", "</li>") }</ul>"""
+      s"""<$tpe>${ items.map(seqToString).mkString("<li>", "</li><li>", "</li>") }</$tpe>"""
+  }
+
+  case class UnorderedList(items: Seq[Seq[ParsedHTML]]) extends ListHTML(items) {
+    override val tpe: String = "ul"
+  }
+
+  case class OrderedList(items: Seq[Seq[ParsedHTML]]) extends ListHTML(items) {
+    override val tpe: String = "ol"
   }
 }

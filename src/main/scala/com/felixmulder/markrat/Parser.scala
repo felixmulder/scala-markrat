@@ -15,6 +15,7 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
   lazy val innerHTML: PackratParser[Body] =
     unorderedList |
+    orderedList   |
     link          |
     inlineCode    |
     bold          |
@@ -69,11 +70,14 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   lazy val blockContents: PackratParser[Seq[ParsedHTML]] =
     (code | header | paragraph).+
 
-  lazy val unorderedParagraph: PackratParser[Paragraph] =
+  lazy val listParagraph: PackratParser[Paragraph] =
     ("""[ ]+""".r ~> (blockQuote | innerHTML) <~ (EOL | EOI)).+ ^^ Paragraph
 
   lazy val unorderedList: PackratParser[UnorderedList] =
-    ("*" ~> (unorderedParagraph <~ EOL.?).+).+ ^^ UnorderedList
+    ("*" ~> (listParagraph <~ EOL.?).+).+ ^^ UnorderedList
+
+  lazy val orderedList: PackratParser[OrderedList] =
+    (orderedItem ~> (listParagraph <~ EOL.?).+).+ ^^ OrderedList
 
 
   def parse(markdown: String) = parseAll(output, markdown) match {

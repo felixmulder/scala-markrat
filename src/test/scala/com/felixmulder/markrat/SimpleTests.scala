@@ -159,6 +159,43 @@ class SimpleTests extends FlatSpec with Matchers {
     testParse("* Hello, 1\n\n Hello, 2\n* Hello, 3\n\n Hello, 4", exp)
   }
 
+  "Ordered list parsing" should "be able to parse a single item of plain text" in {
+    val exp = Seq(Paragraph(Seq(OrderedList(Seq(Seq(Paragraph(Seq(Text("Hello, unordered lists!")))))))))
+
+    testParse("1. Hello, unordered lists!", exp)
+  }
+
+  it should "be able to parse multiple items of plain text" in {
+    val exp = Seq(Paragraph(Seq(
+      OrderedList(Seq(Seq(Paragraph(Seq(Text("Hello, 1")))),
+                        Seq(Paragraph(Seq(Text("Hello, 2")))))))))
+    testParse("1. Hello, 1\n1. Hello, 2", exp)
+  }
+
+  it should "be able to parse single item with multiple lines of text" in {
+    val exp = Seq(Paragraph(Seq(
+      OrderedList(Seq(Seq(Paragraph(Seq(Text("Hello, 1"), Text("Hello, 2")))))))))
+
+    testParse("1. Hello, 1\n  Hello, 2", exp)
+  }
+
+  it should "be able to parse item with multiple paragraphs" in {
+    val exp = Seq(Paragraph(Seq(
+      OrderedList(Seq(Seq(Paragraph(Seq(Text("Hello, 1"))), Paragraph(Seq(Text("Hello, 2")))))))))
+
+    testParse("1. Hello, 1\n\n  Hello, 2", exp)
+  }
+
+  it should "be able to parse multiple items with multiple paragraphs" in {
+    val exp = Seq(Paragraph(Seq(
+      OrderedList(Seq(
+        Seq(Paragraph(Seq(Text("Hello, 1"))), Paragraph(Seq(Text("Hello, 2")))),
+        Seq(Paragraph(Seq(Text("Hello, 3"))), Paragraph(Seq(Text("Hello, 4"))))
+      )))))
+
+    testParse("1. Hello, 1\n\n Hello, 2\n2. Hello, 3\n\n Hello, 4", exp)
+  }
+
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
     case Some(parsed) => parsed shouldEqual expected
     case None => fail
