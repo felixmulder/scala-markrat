@@ -22,8 +22,7 @@ object MarkdownTokens {
   val italicsUnderline = """_""".r
   val italicsAsterisk = """\*""".r
 
-  val unorderedItem = """\*[ ]+""".r
-  val orderedItem = """[1-9]+[ ]+""".r
+  val orderedItem = """[1-9]+\.""".r
 
   val codeBlock = "```"
   val codeLanguage = """[a-zA-Z0-9+-]+""".r

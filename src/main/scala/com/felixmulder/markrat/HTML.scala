@@ -9,7 +9,7 @@ object HTML {
   }
 
   case class Paragraph(body: Seq[Body]) extends ParsedHTML {
-    override def toString = s"<p>${body.mkString}</p>"
+    override def toString = s"""<p>${body.mkString(" ")}</p>"""
   }
 
   sealed trait Body extends ParsedHTML
@@ -42,5 +42,11 @@ object HTML {
   case class Link(text: String, href: String, hoverText: Option[String]) extends Body {
     override def toString =
       s"""<a${ hoverText.map(x => s""" title="$x" """).getOrElse(" ") }href="$href">$text</a>"""
+  }
+
+  case class UnorderedList(items: Seq[Seq[ParsedHTML]]) extends Body {
+    private def seqToString(item: Seq[ParsedHTML]): String = item.mkString(" ")
+    override def toString =
+      s"""<ul>${ items.map(seqToString).mkString("<li>", "</li><li>", "</li>") }</ul>"""
   }
 }
