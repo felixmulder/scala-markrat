@@ -10,8 +10,8 @@ TODO
 * ~~Should be able to define language of code blocks~~
 * ~~Links~~
 * ~~Link titles~~
-* Unordered lists
-* Enumerations (lists with numerals/roman letters)
+* ~~Unordered lists~~
+* ~~Ordered lists~~
 * Images
 * ~~Inline code~~
 * Block quotes

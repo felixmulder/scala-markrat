@@ -74,7 +74,7 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     ("""[ ]+""".r ~> (blockQuote | innerHTML) <~ (EOL | EOI)).+ ^^ Paragraph
 
   lazy val unorderedList: PackratParser[UnorderedList] =
-    ("*" ~> (listParagraph <~ EOL.?).+).+ ^^ UnorderedList
+    (("*" | "+" | "-") ~> (listParagraph <~ EOL.?).+).+ ^^ UnorderedList
 
   lazy val orderedList: PackratParser[OrderedList] =
     (orderedItem ~> (listParagraph <~ EOL.?).+).+ ^^ OrderedList
