@@ -12,10 +12,10 @@ TODO
 * ~~Link titles~~
 * ~~Unordered lists~~
 * ~~Ordered lists~~
-* Images
+* ~~Images~~
 * ~~Inline code~~
 * Block quotes
 * Inline HTML
-* Horizontal rule (`<hr>`)
+* ~~Horizontal rule (`<hr>`)~~
 * ~~Paragraphs instead of raw text~~
 * Tables

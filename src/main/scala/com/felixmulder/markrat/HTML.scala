@@ -63,4 +63,8 @@ object HTML {
   case class OrderedList(items: Seq[Seq[ParsedHTML]]) extends ListHTML(items) {
     override val tpe: String = "ol"
   }
+
+  case class HorizontalRule() extends ParsedHTML {
+    override def toString = "<hr></hr>"
+  }
 }

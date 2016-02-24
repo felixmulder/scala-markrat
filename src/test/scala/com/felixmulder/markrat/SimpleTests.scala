@@ -202,6 +202,21 @@ class SimpleTests extends FlatSpec with Matchers {
     testParse("""![text](href "hoverText")""", exp)
   }
 
+  "Horizontal rule parsing" should "be able to parse a simple horizontal rule" in {
+    val exp = Seq(HorizontalRule())
+    testParse("___", exp)
+    testParse("***", exp)
+    testParse("---", exp)
+  }
+
+  it should "be able to parse an <hr> between two paragraphs" in {
+    val exp = Seq(Paragraph(Seq(Text("Hello"))), HorizontalRule(), Paragraph(Seq(Text("Bye"))))
+
+    testParse("Hello\n\n___\nBye", exp)
+    testParse("Hello\n\n***\nBye", exp)
+    testParse("Hello\n\n---\nBye", exp)
+  }
+
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
     case Some(parsed) => parsed shouldEqual expected
     case None => fail

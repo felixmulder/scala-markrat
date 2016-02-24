@@ -11,16 +11,16 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   private val separator = EOI | EOL
 
   lazy val output: PackratParser[Seq[ParsedHTML]] = html.*
-  lazy val html: PackratParser[ParsedHTML] = code | header | paragraph
+  lazy val html: PackratParser[ParsedHTML] = code | header | horizontalRule | paragraph
   lazy val header: PackratParser[Header] = h6 | h5 | h4 | h3 | h2 | h1
   lazy val innerHTML: PackratParser[Body] =
-    unorderedList |
-    orderedList   |
-    image         |
-    link          |
-    inlineCode    |
-    bold          |
-    italicized    |
+    unorderedList  |
+    orderedList    |
+    image          |
+    link           |
+    inlineCode     |
+    bold           |
+    italicized     |
     EOL.? ~> innerText ^^ Text
 
   lazy val paragraph: PackratParser[Paragraph] =
@@ -82,6 +82,11 @@ class MarkdownParser extends RegexParsers with PackratParsers {
 
   lazy val orderedList: PackratParser[OrderedList] =
     (orderedItem ~> (listParagraph <~ EOL.?).+).+ ^^ OrderedList
+
+  lazy val horizontalRule: PackratParser[HorizontalRule] =
+    ("---" | "***" | "___") <~  separator.?  ^^ {
+      case _ => HorizontalRule()
+    }
 
 
   def parse(markdown: String) = parseAll(output, markdown) match {
