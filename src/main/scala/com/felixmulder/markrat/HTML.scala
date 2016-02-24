@@ -39,6 +39,11 @@ object HTML {
       s"""<pre><code class="${ lang.getOrElse("") }">${ inner.mkString("") }</code></pre>"""
   }
 
+  case class Image(link: Link) extends Body {
+    override def toString =
+      s"""<img src="${link.href}" alt="${link.text}" title="${link.hoverText.getOrElse("")}">"""
+  }
+
   case class Link(text: String, href: String, hoverText: Option[String]) extends Body {
     override def toString =
       s"""<a${ hoverText.map(x => s""" title="$x" """).getOrElse(" ") }href="$href">$text</a>"""

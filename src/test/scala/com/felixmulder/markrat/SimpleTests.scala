@@ -196,6 +196,12 @@ class SimpleTests extends FlatSpec with Matchers {
     testParse("1. Hello, 1\n\n Hello, 2\n2. Hello, 3\n\n Hello, 4", exp)
   }
 
+  "Image parsing" should "be able to parse a simple inline image" in {
+    val exp = Seq(Paragraph(Seq(Image(Link("text", "href", Some("hoverText"))))))
+
+    testParse("""![text](href "hoverText")""", exp)
+  }
+
   def testParse(str: String, expected: Seq[ParsedHTML]) = parser.parse(str) match {
     case Some(parsed) => parsed shouldEqual expected
     case None => fail

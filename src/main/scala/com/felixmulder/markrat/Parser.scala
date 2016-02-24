@@ -16,6 +16,7 @@ class MarkdownParser extends RegexParsers with PackratParsers {
   lazy val innerHTML: PackratParser[Body] =
     unorderedList |
     orderedList   |
+    image         |
     link          |
     inlineCode    |
     bold          |
@@ -61,6 +62,9 @@ class MarkdownParser extends RegexParsers with PackratParsers {
     ("[" ~> linkText <~ "](") ~ url ~ ((whiteSpace.* ~ quote) ~> hoverText <~ quote).? <~ (")" ~ separator.?) ^^ {
       case txt ~ uri ~ hover => Link(txt, uri, hover)
     }
+
+  lazy val image: PackratParser[Image] =
+    "!" ~> link ^^ Image
 
   lazy val blockQuote: PackratParser[Blockquote] =
     ("> " ~> blockContents <~ (EOL | EOI)).+ ^^ {
